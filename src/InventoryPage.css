@@ -1,0 +1,372 @@
+.inv-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 0;
+  padding: 1.25rem 2rem 1.5rem;
+}
+
+/* Summary */
+
+.inv-stats {
+  display: grid;
+  flex-shrink: 0;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.inv-stats > div {
+  padding: 0.75rem 1rem;
+  background: #fff;
+  border: 1px solid var(--m-line);
+  border-radius: 12px;
+}
+
+.inv-stats dt {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--m-muted);
+}
+
+.inv-stats dd {
+  margin: 0.15rem 0 0;
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  color: var(--ink);
+}
+
+.inv-stats .is-warn {
+  border-color: #efd98b;
+  background: #fdf6dc;
+}
+
+.inv-stats .is-warn dd {
+  color: #8a6a12;
+}
+
+.inv-stats .is-danger {
+  border-color: #f0c3b8;
+  background: #fbeae5;
+}
+
+.inv-stats .is-danger dd {
+  color: var(--m-terracotta);
+}
+
+/* Panels */
+
+.inv-panels {
+  display: flex;
+  flex: 1;
+  gap: 1.25rem;
+  min-height: 0;
+}
+
+.inv-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.inv-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.inv-select {
+  height: 36px;
+  padding: 0 0.6rem;
+  border: 1px solid var(--m-line);
+  border-radius: 8px;
+  background: #fff;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--ink);
+}
+
+.inv-check {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--m-muted);
+  cursor: pointer;
+}
+
+.inv-check input {
+  accent-color: var(--m-green);
+}
+
+.inv-table th,
+.inv-table td {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.inv-table td {
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
+}
+
+.inv-table .master-text-button {
+  min-width: 0;
+}
+
+.inv-row {
+  cursor: pointer;
+}
+
+.master-table tbody tr.inv-row.is-selected td {
+  background: #f1f5ec;
+}
+
+.master-table tbody tr.inv-row.is-selected td:first-child {
+  box-shadow: inset 3px 0 0 var(--m-gold);
+}
+
+.inv-row.is-inactive td {
+  color: #a3a697;
+}
+
+.inv-stock {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 600;
+}
+
+.inv-level {
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.inv-level.is-low {
+  background: #fdf3cf;
+  color: #8a6a12;
+}
+
+.inv-level.is-out {
+  background: #fbe4df;
+  color: var(--m-terracotta);
+}
+
+.inv-warn {
+  color: var(--m-terracotta);
+  font-weight: 600;
+}
+
+/* Movements */
+
+.inv-side {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: 280px;
+  min-height: 0;
+  background: #fff;
+  border: 1px solid var(--m-line);
+  border-radius: 12px;
+}
+
+.inv-side-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.9rem 1rem 0.75rem;
+  border-bottom: 1px solid var(--m-line);
+}
+
+.inv-side-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--ink);
+}
+
+.inv-side-subtitle {
+  margin: 0.1rem 0 0;
+  font-size: 0.75rem;
+  color: var(--m-muted);
+}
+
+.inv-link {
+  flex-shrink: 0;
+  padding: 0.2rem;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 0.75rem;
+  color: var(--m-green);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.inv-movements {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.inv-movements-empty {
+  padding: 2rem 1rem;
+  font-size: 0.82rem;
+  text-align: center;
+  color: var(--m-muted);
+}
+
+.inv-movement {
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--m-line);
+}
+
+.inv-movement:last-child {
+  border-bottom: none;
+}
+
+.inv-movement-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.inv-kind {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.inv-kind::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 0.4rem;
+  border-radius: 50%;
+  background: var(--m-muted);
+  vertical-align: 1px;
+}
+
+.inv-kind.is-sale::before { background: var(--m-green); }
+.inv-kind.is-usage::before { background: var(--m-gold); }
+.inv-kind.is-received::before,
+.inv-kind.is-returned::before,
+.inv-kind.is-opening::before { background: #3f9a63; }
+.inv-kind.is-damaged::before,
+.inv-kind.is-expired::before { background: var(--m-terracotta); }
+
+.inv-change {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.inv-change.is-in,
+.inv-preview .is-in {
+  color: #2f7a4b;
+}
+
+.inv-change.is-out,
+.inv-preview .is-out {
+  color: var(--m-terracotta);
+}
+
+.inv-movement-product {
+  margin: 0.15rem 0 0;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+.inv-movement-note,
+.inv-movement-meta {
+  margin: 0.15rem 0 0;
+  font-size: 0.72rem;
+  color: var(--m-muted);
+}
+
+.inv-movement-note .mono {
+  font-family: var(--font-mono);
+}
+
+/* Adjust dialog */
+
+.inv-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.75rem 1.5rem 0;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--m-line);
+  border-radius: 8px;
+  background: #f7f8f2;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+}
+
+.inv-preview .mono {
+  font-family: var(--font-mono);
+  color: var(--ink);
+}
+
+.inv-preview .is-negative {
+  color: var(--m-terracotta);
+}
+
+.inv-preview .is-in,
+.inv-preview .is-out {
+  margin-left: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+@media (max-width: 1100px) {
+  .master-page.inv-page {
+    height: auto;
+  }
+
+  .inv-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .inv-panels {
+    flex-direction: column;
+  }
+
+  .inv-main .master-table-wrap {
+    max-height: 60vh;
+  }
+
+  .inv-side {
+    width: auto;
+    max-height: 50vh;
+  }
+}
+
+@media (max-width: 980px) {
+  .inv-body {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .inv-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
