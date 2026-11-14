@@ -333,6 +333,16 @@
   text-decoration: underline;
 }
 
+.book-online-link {
+  font-weight: 600;
+  color: var(--olive);
+  text-decoration: none;
+}
+
+.book-online-link:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 760px) {
   .auth-page {
     height: auto;

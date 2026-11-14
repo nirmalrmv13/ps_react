@@ -32,6 +32,7 @@ function itemSummary(invoice) {
   const parts = []
   if (invoice.services) parts.push(`${invoice.services} ${invoice.services === 1 ? 'service' : 'services'}`)
   if (invoice.products) parts.push(`${invoice.products} ${invoice.products === 1 ? 'product' : 'products'}`)
+  if (invoice.memberships) parts.push('membership')
   return parts.join(' · ') || '—'
 }
 
@@ -175,7 +176,7 @@ function BillingHistoryPage() {
               ) : (
                 invoices.map((inv) => {
                   const when = formatWhen(inv.createdAt)
-                  const discounts = inv.discount + inv.loyaltyDiscount
+                  const discounts = inv.discount + inv.loyaltyDiscount + inv.membershipDiscount
                   return (
                     <tr
                       key={inv.id}
@@ -214,7 +215,9 @@ function BillingHistoryPage() {
                           <>
                             <span className="master-cell-value is-mono bh-discount">−{formatINR(discounts)}</span>
                             <span className="master-cell-detail">
-                              {[inv.freeServiceUsed && 'Free service', inv.couponCode].filter(Boolean).join(' · ')}
+                              {[inv.freeServiceUsed && 'Free service', inv.membershipName, inv.couponCode]
+                                .filter(Boolean)
+                                .join(' · ')}
                             </span>
                           </>
                         ) : (

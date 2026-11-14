@@ -7,6 +7,11 @@ import { formatINR } from './format.js'
 import { DownloadIcon, GiftIcon, StarIcon } from './Icons.jsx'
 import './InvoiceView.css'
 
+const ITEM_TYPES = { service: 'Service', product: 'Product', membership: 'Membership' }
+
+const dayDate = (day) =>
+  new Date(`${day}T00:00`).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+
 function formatDateTime(value) {
   return new Date(value).toLocaleString('en-IN', {
     day: '2-digit',
@@ -140,7 +145,7 @@ function InvoiceView({ id }) {
                 <td>
                   <span className="iv-item">{item.name}</span>
                   <span className="iv-item-type">
-                    {item.type === 'service' ? 'Service' : 'Product'}
+                    {ITEM_TYPES[item.type] ?? item.type}
                     {item.type === 'service' && item.id === freeServiceId && (
                       <span className="iv-free">Free · loyalty reward</span>
                     )}
@@ -175,6 +180,15 @@ function InvoiceView({ id }) {
                 </p>
               </div>
             )}
+            {invoice.membershipSold && (
+              <div className="iv-loyalty">
+                <p>
+                  <StarIcon filled />
+                  {invoice.membershipSold.planName} valid {dayDate(invoice.membershipSold.startDate)} to{' '}
+                  {dayDate(invoice.membershipSold.endDate)}.
+                </p>
+              </div>
+            )}
             <p className="iv-thanks">Thank you for visiting. {config?.tagline || BRAND.tagline}</p>
           </div>
 
@@ -187,6 +201,12 @@ function InvoiceView({ id }) {
               <div className="is-discount">
                 <dt>Loyalty free service</dt>
                 <dd className="mono">−{formatINR(t.loyaltyDiscount)}</dd>
+              </div>
+            )}
+            {t.membershipDiscount > 0 && (
+              <div className="is-discount">
+                <dt>Membership discount{invoice.membershipName && ` (${invoice.membershipName})`}</dt>
+                <dd className="mono">−{formatINR(t.membershipDiscount)}</dd>
               </div>
             )}
             {t.discount > 0 && (

@@ -6,12 +6,19 @@ import { formatINRWhole } from './format.js'
 import {
   BoxIcon,
   CalendarIcon,
+  CardIcon,
+  CartIcon,
+  ChartIcon,
   HistoryIcon,
   LogoutIcon,
   LotusIcon,
   PackageIcon,
+  PrintIcon,
   ReceiptIcon,
+  SparklesIcon,
   TagIcon,
+  TruckIcon,
+  UserIcon,
   UsersIcon,
 } from './Icons.jsx'
 import './Sidebar.css'
@@ -23,7 +30,12 @@ const sections = [
       { id: 'appointments', label: 'Appointments', Icon: CalendarIcon },
       { id: 'billing', label: 'Billing & POS', Icon: ReceiptIcon },
       { id: 'history', label: 'Billing History', Icon: HistoryIcon },
+      { id: 'receipt', label: 'Receipt Sample', Icon: PrintIcon },
+      { id: 'receiptLab', label: 'Receipt Lab', Icon: SparklesIcon },
+      { id: 'customers', label: 'Customers', Icon: UserIcon },
       { id: 'inventory', label: 'Inventory', Icon: PackageIcon, adminOnly: true },
+      { id: 'purchases', label: 'Purchases', Icon: CartIcon, adminOnly: true },
+      { id: 'reports', label: 'Reports', Icon: ChartIcon, adminOnly: true },
     ],
   },
   {
@@ -34,6 +46,8 @@ const sections = [
       { id: 'services', label: 'Service Master', Icon: LotusIcon },
       { id: 'employees', label: 'Employee Master', Icon: UsersIcon },
       { id: 'coupons', label: 'Coupon Master', Icon: TagIcon },
+      { id: 'membershipPlans', label: 'Membership Plans', Icon: CardIcon },
+      { id: 'suppliers', label: 'Supplier Master', Icon: TruckIcon },
     ],
   },
 ]

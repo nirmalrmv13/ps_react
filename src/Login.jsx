@@ -176,6 +176,11 @@ function Login({ onLogin, message = '' }) {
             Sign Up
           </button>
         </p>
+        <p className="signup-text">
+          <a className="book-online-link" href="?book">
+            Book an appointment online →
+          </a>
+        </p>
       </section>
     </main>
   )

@@ -53,6 +53,15 @@ export function PlusIcon(props) {
   )
 }
 
+export function XIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...strokeProps} {...props}>
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  )
+}
+
 export function MinusIcon(props) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" {...strokeProps} {...props}>
@@ -111,6 +120,56 @@ export function LotusIcon(props) {
     <svg viewBox="0 0 24 24" aria-hidden="true" {...strokeProps} {...props}>
       <path d="M12 20c-4.5 0-8.5-2.5-9.5-6.5 3.5 0 6.5 1.5 9.5 4.5 3-3 6-4.5 9.5-4.5-1 4-5 6.5-9.5 6.5z" />
       <path d="M12 18c-2.2-2.6-3-6-1.8-10 .8.8 1.4 1.8 1.8 2.8.4-1 1-2 1.8-2.8 1.2 4 .4 7.4-1.8 10z" />
+    </svg>
+  )
+}
+
+export function ScissorsIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...strokeProps} {...props}>
+      <circle cx="6" cy="6" r="3" />
+      <circle cx="6" cy="18" r="3" />
+      <line x1="20" y1="4" x2="8.12" y2="15.88" />
+      <line x1="14.47" y1="14.48" x2="20" y2="20" />
+      <line x1="8.12" y1="8.12" x2="12" y2="12" />
+    </svg>
+  )
+}
+
+export function SparklesIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...strokeProps} {...props}>
+      <path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z" />
+      <path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z" />
+    </svg>
+  )
+}
+
+export function DropletIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...strokeProps} {...props}>
+      <path d="M12 2.7l5.7 5.6a8 8 0 1 1-11.3 0z" />
+    </svg>
+  )
+}
+
+export function WavesIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...strokeProps} {...props}>
+      <path d="M2 7c2.5-2 5-2 7.5 0s5 2 7.5 0 3.5-1.5 5-1" />
+      <path d="M2 12c2.5-2 5-2 7.5 0s5 2 7.5 0 3.5-1.5 5-1" />
+      <path d="M2 17c2.5-2 5-2 7.5 0s5 2 7.5 0 3.5-1.5 5-1" />
+    </svg>
+  )
+}
+
+export function GridIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...strokeProps} {...props}>
+      <rect x="3" y="3" width="7" height="7" rx="2" />
+      <rect x="14" y="3" width="7" height="7" rx="2" />
+      <rect x="3" y="14" width="7" height="7" rx="2" />
+      <rect x="14" y="14" width="7" height="7" rx="2" />
     </svg>
   )
 }
@@ -215,6 +274,57 @@ export function UsersIcon(props) {
       <circle cx="9" cy="7" r="4" />
       <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
       <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  )
+}
+
+export function UserIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...strokeProps} {...props}>
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  )
+}
+
+export function CardIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...strokeProps} {...props}>
+      <rect x="2" y="5" width="20" height="14" rx="2" />
+      <line x1="2" y1="10" x2="22" y2="10" />
+      <line x1="6" y1="15" x2="10" y2="15" />
+    </svg>
+  )
+}
+
+export function CartIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...strokeProps} {...props}>
+      <circle cx="9" cy="21" r="1" />
+      <circle cx="20" cy="21" r="1" />
+      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+    </svg>
+  )
+}
+
+export function TruckIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...strokeProps} {...props}>
+      <rect x="1" y="3" width="15" height="13" />
+      <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+      <circle cx="5.5" cy="18.5" r="2.5" />
+      <circle cx="18.5" cy="18.5" r="2.5" />
+    </svg>
+  )
+}
+
+export function ChartIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...strokeProps} {...props}>
+      <line x1="18" y1="20" x2="18" y2="10" />
+      <line x1="12" y1="20" x2="12" y2="4" />
+      <line x1="6" y1="20" x2="6" y2="14" />
+      <line x1="3" y1="20" x2="21" y2="20" />
     </svg>
   )
 }

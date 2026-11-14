@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { apiGet, apiPost, apiPut } from './api.js'
-import { EditIcon, PlusIcon, SearchIcon } from './Icons.jsx'
+import { EditIcon, PlusIcon, SearchIcon, XIcon } from './Icons.jsx'
 import './MasterPage.css'
 
 const statusFilters = [
@@ -144,39 +144,44 @@ function MasterForm({ config, item, suggestions, onClose, onSaved }) {
           <h2 id="master-dialog-title">
             {isNew ? `Add ${config.singular}` : `Edit ${config.columns[0].value(item)}`}
           </h2>
+          <button type="button" className="master-dialog-close" onClick={onClose} disabled={saving} aria-label="Close">
+            <XIcon />
+          </button>
         </header>
 
-        <div className="master-form-grid">
-          {config.fields
-            .filter((field) => !field.showIf || field.showIf(values))
-            .map((field) => (
-              <FormField
-                key={field.name}
-                field={field}
-                values={values}
-                suggestions={suggestions}
-                onChange={handleChange}
-              />
-            ))}
+        <div className="master-form-body">
+          <div className="master-form-grid">
+            {config.fields
+              .filter((field) => !field.showIf || field.showIf(values))
+              .map((field) => (
+                <FormField
+                  key={field.name}
+                  field={field}
+                  values={values}
+                  suggestions={suggestions}
+                  onChange={handleChange}
+                />
+              ))}
+          </div>
+
+          <label className="master-toggle">
+            <input
+              type="checkbox"
+              checked={isActive}
+              onChange={(event) => setIsActive(event.target.checked)}
+            />
+            <span>
+              <strong>Active</strong>
+              <span>{config.inactiveHint ?? `Inactive ${config.listKey} are hidden from the billing screen.`}</span>
+            </span>
+          </label>
+
+          {error && (
+            <p className="master-alert is-error" role="alert">
+              {error}
+            </p>
+          )}
         </div>
-
-        <label className="master-toggle">
-          <input
-            type="checkbox"
-            checked={isActive}
-            onChange={(event) => setIsActive(event.target.checked)}
-          />
-          <span>
-            <strong>Active</strong>
-            <span>{config.inactiveHint ?? `Inactive ${config.listKey} are hidden from the billing screen.`}</span>
-          </span>
-        </label>
-
-        {error && (
-          <p className="master-alert is-error" role="alert">
-            {error}
-          </p>
-        )}
 
         <footer className="master-form-actions">
           <button type="button" className="master-button is-secondary" onClick={onClose} disabled={saving}>

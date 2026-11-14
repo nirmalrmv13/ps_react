@@ -17,6 +17,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ClockIcon,
+  ExternalLinkIcon,
   PhoneIcon,
   PlusIcon,
   ReceiptIcon,
@@ -48,6 +49,14 @@ function StatusChip({ status }) {
   return <span className={`appt-chip is-${STATUS[status].tone}`}>{STATUS[status].label}</span>
 }
 
+function OnlineTag() {
+  return (
+    <span className="appt-online" title="Booked by the client on the online booking page">
+      Online
+    </span>
+  )
+}
+
 function AppointmentDetails({ appointment, busy, onStatus, onEdit, onCheckout }) {
   const { status } = appointment
   const active = !INACTIVE_STATUSES.includes(status) && status !== 'completed'
@@ -57,7 +66,10 @@ function AppointmentDetails({ appointment, busy, onStatus, onEdit, onCheckout })
     <section className="appt-card">
       <h2 className="appt-card-title">
         Booking details
-        <StatusChip status={status} />
+        <span className="appt-title-tags">
+          {appointment.source === 'online' && <OnlineTag />}
+          <StatusChip status={status} />
+        </span>
       </h2>
 
       <div className="appt-client">
@@ -95,6 +107,13 @@ function AppointmentDetails({ appointment, busy, onStatus, onEdit, onCheckout })
           {appointment.employeeDesignation && <span>{appointment.employeeDesignation}</span>}
         </p>
       </div>
+
+      {appointment.onlineRef && (
+        <div className="appt-section">
+          <p className="appt-section-label">Online booking</p>
+          <p className="appt-notes">Reference PS-{String(appointment.onlineRef).padStart(5, '0')}</p>
+        </div>
+      )}
 
       {appointment.notes && (
         <div className="appt-section">
@@ -275,6 +294,16 @@ function AppointmentsPage({ onCheckout }) {
     }
   }
 
+  async function copyBookingLink() {
+    const link = `${window.location.origin}${window.location.pathname}?book`
+    try {
+      await navigator.clipboard.writeText(link)
+      setNotice(`Online booking link copied: ${link}`)
+    } catch {
+      window.prompt('Copy the online booking link:', link)
+    }
+  }
+
   function goToDay(next) {
     if (!next) return
     scrollPending.current = true
@@ -286,15 +315,21 @@ function AppointmentsPage({ onCheckout }) {
     <div className="master-page appt-page">
       <header className="master-header">
         <h1 className="master-title">Appointments</h1>
-        <button
-          type="button"
-          className="master-add"
-          onClick={() => setBooking({ date: day })}
-          disabled={!config}
-        >
-          <PlusIcon />
-          Book Appointment
-        </button>
+        <div className="appt-header-actions">
+          <button type="button" className="appt-share" onClick={copyBookingLink}>
+            <ExternalLinkIcon />
+            Copy booking link
+          </button>
+          <button
+            type="button"
+            className="master-add"
+            onClick={() => setBooking({ date: day })}
+            disabled={!config}
+          >
+            <PlusIcon />
+            Book Appointment
+          </button>
+        </div>
       </header>
 
       <div className="appt-body">
@@ -448,6 +483,7 @@ function AppointmentsPage({ onCheckout }) {
                           >
                             <span className="appt-block-top">
                               <StatusChip status={a.status} />
+                              {a.source === 'online' && <OnlineTag />}
                               <span className="appt-block-price">{formatINRWhole(a.servicePrice)}</span>
                             </span>
                             <span className="appt-block-service">{a.serviceName}</span>

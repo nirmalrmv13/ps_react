@@ -331,43 +331,147 @@
   width: min(640px, calc(100vw - 2rem));
   max-height: calc(100dvh - 2rem);
   padding: 0;
-  border: none;
-  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(201, 164, 92, 0.25);
+  border-radius: 18px;
   background: #fff;
-  box-shadow: 0 24px 60px rgba(20, 30, 24, 0.35);
+  box-shadow:
+    0 30px 80px rgba(15, 25, 19, 0.4),
+    0 8px 20px rgba(15, 25, 19, 0.18);
   color: var(--ink);
 }
 
+.master-dialog[open] {
+  display: flex;
+  flex-direction: column;
+  animation: master-dialog-in 0.22s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.master-form {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.master-form-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding-bottom: 1.25rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #c8ccbb transparent;
+}
+
+.master-form-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.master-form-body::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: #c8ccbb;
+}
+
 .master-dialog::backdrop {
-  background: rgba(20, 30, 24, 0.55);
+  background: rgba(15, 25, 19, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.master-dialog[open]::backdrop {
+  animation: master-backdrop-in 0.22s ease-out;
+}
+
+@keyframes master-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+}
+
+@keyframes master-backdrop-in {
+  from {
+    opacity: 0;
+  }
 }
 
 .master-form-header {
-  padding: 1.25rem 1.5rem 1rem;
-  background: #1f3a2c;
+  position: relative;
+  flex-shrink: 0;
+  padding: 1.35rem 4.25rem 1.15rem 1.6rem;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(201, 164, 92, 0.22), transparent 55%),
+    linear-gradient(135deg, #1f3a2c 0%, #2c4a39 100%);
+  border-bottom: 2px solid #c9a45c;
 }
 
 .master-form-eyebrow {
-  margin: 0 0 0.2rem;
-  font-size: 0.65rem;
+  display: inline-block;
+  margin: 0 0 0.4rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(217, 178, 76, 0.15);
+  font-size: 0.62rem;
+  font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #d9b24c;
+  color: #e3c271;
 }
 
 .master-form-header h2 {
   margin: 0;
   font-family: var(--font-serif);
   font-weight: 400;
-  font-size: 1.45rem;
+  font-size: 1.5rem;
+  line-height: 1.2;
   color: #fff;
+  overflow-wrap: anywhere;
+}
+
+.master-dialog-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.2s;
+}
+
+.master-dialog-close svg {
+  width: 18px;
+  height: 18px;
+}
+
+.master-dialog-close:hover:not(:disabled) {
+  border-color: #c9a45c;
+  background: #c9a45c;
+  color: #1f3a2c;
+  transform: rotate(90deg);
+}
+
+.master-dialog-close:focus-visible {
+  outline: 2px solid #e3c271;
+  outline-offset: 2px;
+}
+
+.master-dialog-close:disabled {
+  opacity: 0.5;
+  cursor: wait;
 }
 
 .master-form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem 1.1rem;
-  padding: 1.25rem 1.5rem 0.5rem;
+  gap: 1.1rem 1.2rem;
+  padding: 1.4rem 1.6rem 0.5rem;
 }
 
 .master-field {
@@ -395,13 +499,25 @@
 
 .master-field :is(input, select, textarea) {
   width: 100%;
-  padding: 0.55rem 0.75rem;
+  padding: 0.6rem 0.8rem;
   border: 1px solid #d9dccd;
-  border-radius: 8px;
-  background: #fff;
+  border-radius: 10px;
+  background: #fbfcf8;
   font: inherit;
   font-size: 0.9rem;
   color: var(--ink);
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.master-field :is(input, select, textarea):hover {
+  border-color: #c3c7b4;
+}
+
+.master-field :is(input, select, textarea):focus {
+  outline: none;
+  border-color: #c9a45c;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(201, 164, 92, 0.2);
 }
 
 .master-field textarea {
@@ -447,21 +563,33 @@
 }
 
 .master-form-actions {
+  flex-shrink: 0;
   display: flex;
   justify-content: flex-end;
   gap: 0.75rem;
-  margin-top: 1.25rem;
-  padding: 1rem 1.5rem;
+  padding: 1rem 1.6rem;
   border-top: 1px solid #e4e6dc;
+  background: #f7f8f2;
 }
 
 .master-button {
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
+  padding: 0.65rem 1.35rem;
+  border-radius: 10px;
   font: inherit;
   font-size: 0.88rem;
   font-weight: 500;
   cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.master-button.is-secondary:hover:not(:disabled) {
+  border-color: #c3c7b4;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(20, 30, 24, 0.08);
+}
+
+.master-button.is-primary {
+  box-shadow: 0 4px 12px rgba(31, 58, 44, 0.25);
 }
 
 .master-button:disabled {
@@ -503,5 +631,16 @@
 @media (max-width: 600px) {
   .master-form-grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .master-dialog[open],
+  .master-dialog[open]::backdrop {
+    animation: none;
+  }
+
+  .master-dialog-close:hover:not(:disabled) {
+    transform: none;
   }
 }

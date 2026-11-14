@@ -1,0 +1,232 @@
+.pur-select {
+  height: 36px;
+  max-width: 220px;
+  padding: 0 0.6rem;
+  border: 1px solid var(--m-line);
+  border-radius: 8px;
+  background: #fff;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--ink);
+}
+
+.bh-stats .pur-due {
+  border-color: #efd98b;
+  background: #fdf6dc;
+}
+
+.bh-stats .pur-due dd {
+  color: #8a6a12;
+}
+
+.pur-status {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pur-status.is-paid {
+  background: #e2f3e7;
+  color: #2f7a4b;
+}
+
+.pur-status.is-unpaid {
+  background: #fdf3cf;
+  color: #8a6a12;
+}
+
+/* Dialogs */
+
+.master-dialog.pur-dialog {
+  width: min(860px, calc(100vw - 2rem));
+}
+
+.pur-form-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.pur-span-2 {
+  grid-column: span 2;
+}
+
+.pur-lines {
+  margin: 0.75rem 1.5rem 0;
+  padding: 0.5rem 0.75rem 0.75rem;
+  border: 1px solid #e4e6dc;
+  border-radius: 10px;
+  background: #fafbf6;
+}
+
+.pur-lines-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.pur-lines-table th {
+  padding: 0.45rem 0.4rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.pur-lines-table td {
+  padding: 0.3rem 0.4rem;
+  border-top: 1px solid #eceee6;
+}
+
+.pur-lines-table .is-right {
+  text-align: right;
+}
+
+.pur-lines-table :is(input, select) {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid #d9dccd;
+  border-radius: 6px;
+  background: #fff;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--ink);
+}
+
+.pur-lines-table input[type='number'] {
+  max-width: 120px;
+  text-align: right;
+}
+
+.pur-lines-table td:first-child {
+  width: 50%;
+}
+
+.pur-lines-table tfoot td {
+  font-weight: 500;
+}
+
+.pur-lines-table tfoot .is-total td {
+  font-weight: 700;
+  border-top: 2px solid #d9dccd;
+}
+
+.master-text-button.pur-add-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-width: 0;
+  margin-top: 0.5rem;
+}
+
+.pur-add-line svg {
+  width: 14px;
+  height: 14px;
+}
+
+.pur-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  margin: 1rem 1.5rem 0;
+}
+
+.pur-paid {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.pur-paid input {
+  accent-color: #1f3a2c;
+}
+
+.pur-summary dl {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 240px;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.pur-summary dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.pur-summary dt {
+  color: #6b6f60;
+}
+
+.pur-summary dd {
+  margin: 0;
+}
+
+.pur-summary .is-total {
+  padding-top: 0.3rem;
+  border-top: 1px solid #e4e6dc;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.pur-summary .is-total dt {
+  color: var(--ink);
+}
+
+.pur-hint {
+  margin: 0.75rem 1.5rem 0;
+  font-size: 0.75rem;
+  color: #6b6f60;
+}
+
+.pur-detail {
+  padding: 1rem 1.5rem 0;
+}
+
+.pur-detail .pur-hint {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.pur-detail-meta {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+}
+
+.pur-detail-meta dt {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6b6f60;
+}
+
+.pur-detail-meta dd {
+  margin: 0.15rem 0 0;
+  font-size: 0.88rem;
+}
+
+@media (max-width: 700px) {
+  .pur-form-grid,
+  .pur-detail-meta {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pur-span-2 {
+    grid-column: auto;
+  }
+
+  .pur-summary {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

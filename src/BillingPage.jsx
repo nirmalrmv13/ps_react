@@ -41,8 +41,11 @@ function groupByCategory(list) {
 }
 
 function maxQuantityFor(entry, reserved = 0) {
+  if (entry?.type === 'membership') return 1
   return entry?.type === 'product' ? Math.min(entry.stock - reserved, MAX_QUANTITY) : MAX_QUANTITY
 }
+
+const dayDate = (day) => formatDate(`${day}T00:00`)
 
 function StarRow({ stars, total }) {
   const extra = Math.max(stars - total, 0)
@@ -58,7 +61,7 @@ function StarRow({ stars, total }) {
 
 function BillingPage({ appointment = null }) {
   const [config, setConfig] = useState(null)
-  const [catalog, setCatalog] = useState({ services: [], products: [] })
+  const [catalog, setCatalog] = useState({ services: [], products: [], plans: [] })
   const [coupons, setCoupons] = useState([])
   const [loadError, setLoadError] = useState('')
 
@@ -91,10 +94,11 @@ function BillingPage({ appointment = null }) {
       apiGet('/api/services'),
       apiGet('/api/products'),
       apiGet('/api/coupons'),
+      apiGet('/api/membership-plans'),
     ])
-      .then(([configData, servicesData, productsData, couponsData]) => {
+      .then(([configData, servicesData, productsData, couponsData, plansData]) => {
         setConfig(configData)
-        setCatalog({ services: servicesData.services, products: productsData.products })
+        setCatalog({ services: servicesData.services, products: productsData.products, plans: plansData.plans })
         setCoupons(couponsData.coupons)
       })
       .catch((err) => setLoadError(err.message))
@@ -129,6 +133,8 @@ function BillingPage({ appointment = null }) {
         ? Number(freeServiceId)
         : billServiceIds[0]
       : null
+  const quotePhone = phoneComplete ? phoneDigits : ''
+  const sellsMembership = items.some((i) => i.type === 'membership')
 
   useEffect(() => {
     const controller = new AbortController()
@@ -138,6 +144,7 @@ function BillingPage({ appointment = null }) {
         items: toRequestItems(items),
         couponCode: appliedCode || undefined,
         freeServiceId: effectiveFreeServiceId ?? undefined,
+        customerPhone: quotePhone || undefined,
       },
       { signal: controller.signal },
     )
@@ -149,7 +156,7 @@ function BillingPage({ appointment = null }) {
         if (err.name !== 'AbortError') setQuoteError(err.message)
       })
     return () => controller.abort()
-  }, [items, appliedCode, effectiveFreeServiceId])
+  }, [items, appliedCode, effectiveFreeServiceId, quotePhone])
 
   const catalogByKey = useMemo(() => {
     const map = new Map()
@@ -167,6 +174,13 @@ function BillingPage({ appointment = null }) {
         detail: [p.brand, p.size].filter(Boolean).join(' • '),
       })
     }
+    for (const plan of catalog.plans) {
+      map.set(itemKey('membership', plan.id), {
+        ...plan,
+        type: 'membership',
+        detail: `Membership • ${plan.durationDays} days • ${plan.discountPercent}% off services`,
+      })
+    }
     return map
   }, [catalog])
 
@@ -176,6 +190,9 @@ function BillingPage({ appointment = null }) {
   const couponApplied = appliedCode && quote?.coupon?.code === appliedCode ? quote.coupon : null
   const couponError = appliedCode && !couponApplied ? quote?.couponError : ''
   const discountCode = invoice ? invoice.couponCode : couponApplied?.code
+  const membershipLabel = invoice
+    ? invoice.membershipName
+    : quote?.membership && `${quote.membership.name} · ${quote.membership.discountPercent}%`
   const billingDate = invoice?.createdAt ?? new Date()
 
   const soldQuantity = (productId) =>
@@ -688,6 +705,12 @@ function BillingPage({ appointment = null }) {
                       `Earned ${invoice.starsEarned} ${invoice.starsEarned === 1 ? 'star' : 'stars'} on this bill. `}
                     Now {invoice.customer.stars} of {starsForFree} stars.
                   </p>
+                  {invoice.membershipSold && (
+                    <p className="member-note">
+                      {invoice.membershipSold.planName} active {dayDate(invoice.membershipSold.startDate)} –{' '}
+                      {dayDate(invoice.membershipSold.endDate)}.
+                    </p>
+                  )}
                 </div>
               ) : (
                 <p className="pos-side-desc">No customer was added to this bill.</p>
@@ -737,6 +760,12 @@ function BillingPage({ appointment = null }) {
                       {knownCustomer.freeServicesRedeemed > 0 &&
                         ` · ${knownCustomer.freeServicesRedeemed} free ${knownCustomer.freeServicesRedeemed === 1 ? 'service' : 'services'} used`}
                     </span>
+                    {knownCustomer.membership && (
+                      <p className="member-note">
+                        {knownCustomer.membership.planName} · {knownCustomer.membership.discountPercent}% off
+                        services · till {dayDate(knownCustomer.membership.validUntil)}
+                      </p>
+                    )}
                     <StarRow stars={knownCustomer.stars} total={starsForFree} />
                     {canRedeem ? (
                       <p className="loyalty-ready">
@@ -802,7 +831,7 @@ function BillingPage({ appointment = null }) {
               <span className="pos-side-tag">Quick Catalog</span>
             </div>
             <p className="pos-side-desc">
-              Add a salon service or a retail product to the bill.
+              Add a salon service, a retail product or a membership to the bill.
             </p>
             <select
               className="pos-select"
@@ -834,6 +863,19 @@ function BillingPage({ appointment = null }) {
                   })}
                 </optgroup>
               ))}
+              {catalog.plans.length > 0 && (
+                <optgroup label="Memberships">
+                  {catalog.plans.map((plan) => (
+                    <option
+                      key={plan.id}
+                      value={itemKey('membership', plan.id)}
+                      disabled={sellsMembership}
+                    >
+                      {plan.name} — {formatINR(plan.price)} ({plan.discountPercent}% off services)
+                    </option>
+                  ))}
+                </optgroup>
+              )}
             </select>
             <button
               type="button"
@@ -917,6 +959,15 @@ function BillingPage({ appointment = null }) {
                   <dd className="mono discount">−{formatINR(totals.loyaltyDiscount)}</dd>
                 </div>
               )}
+              {totals?.membershipDiscount > 0 && (
+                <div>
+                  <dt>
+                    Membership Discount
+                    {membershipLabel && <span className="discount-chip">{membershipLabel}</span>}
+                  </dt>
+                  <dd className="mono discount">−{formatINR(totals.membershipDiscount)}</dd>
+                </div>
+              )}
               <div>
                 <dt>
                   Privilege Discount
@@ -952,6 +1003,9 @@ function BillingPage({ appointment = null }) {
               {!locked && isNewCustomer && !customerName.trim() && (
                 <p className="loyalty-note">Enter the customer&apos;s name to settle, or clear the mobile number.</p>
               )}
+              {!locked && sellsMembership && !phoneComplete && (
+                <p className="loyalty-note">Add the customer&apos;s mobile number to sell a membership.</p>
+              )}
               {locked ? (
                 <button type="button" className="pos-primary" onClick={startNewFolio}>
                   Start New Folio
@@ -965,7 +1019,8 @@ function BillingPage({ appointment = null }) {
                     items.length === 0 ||
                     settling ||
                     (isNewCustomer && !customerName.trim()) ||
-                    (phoneDigits.length > 0 && !lookupDone)
+                    (phoneDigits.length > 0 && !lookupDone) ||
+                    (sellsMembership && !phoneComplete)
                   }
                 >
                   {settling ? 'Settling…' : 'Proceed to POS Settlement'}

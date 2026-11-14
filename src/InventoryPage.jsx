@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { apiGet, apiPost } from './api.js'
 import { formatINRWhole } from './format.js'
-import { PlusIcon, SearchIcon } from './Icons.jsx'
+import { PlusIcon, SearchIcon, XIcon } from './Icons.jsx'
 import './MasterPage.css'
 import './InventoryPage.css'
 
@@ -109,86 +109,91 @@ function AdjustStockForm({ products, initialProductId, onClose, onSaved }) {
         <header className="master-form-header">
           <p className="master-form-eyebrow">Inventory</p>
           <h2 id="adjust-dialog-title">Adjust stock</h2>
+          <button type="button" className="master-dialog-close" onClick={onClose} disabled={saving} aria-label="Close">
+            <XIcon />
+          </button>
         </header>
 
-        <div className="master-form-grid">
-          <div className="master-field is-wide">
-            <label htmlFor="adjust-product">
-              Product<span className="master-required" aria-hidden="true">*</span>
-            </label>
-            <select id="adjust-product" value={productId} onChange={(e) => setProductId(e.target.value)} required>
-              <option value="">Select a product…</option>
-              {products.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name} — {p.stock} in stock{p.isActive ? '' : ' (inactive)'}
-                </option>
-              ))}
-            </select>
+        <div className="master-form-body">
+          <div className="master-form-grid">
+            <div className="master-field is-wide">
+              <label htmlFor="adjust-product">
+                Product<span className="master-required" aria-hidden="true">*</span>
+              </label>
+              <select id="adjust-product" value={productId} onChange={(e) => setProductId(e.target.value)} required>
+                <option value="">Select a product…</option>
+                {products.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name} — {p.stock} in stock{p.isActive ? '' : ' (inactive)'}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="master-field">
+              <label htmlFor="adjust-reason">
+                Adjustment<span className="master-required" aria-hidden="true">*</span>
+              </label>
+              <select id="adjust-reason" value={reason} onChange={(e) => setReason(e.target.value)}>
+                {ADJUSTMENTS.map((a) => (
+                  <option key={a.value} value={a.value}>
+                    {a.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="master-field">
+              <label htmlFor="adjust-quantity">
+                {isCount ? 'Counted quantity' : 'Quantity'}
+                <span className="master-required" aria-hidden="true">*</span>
+              </label>
+              <input
+                id="adjust-quantity"
+                type="number"
+                min={isCount ? 0 : 1}
+                max={!isCount && reason !== 'received' && reason !== 'returned' ? product?.stock : undefined}
+                step="1"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                required
+              />
+            </div>
+            <div className="master-field is-wide">
+              <label htmlFor="adjust-note">Note</label>
+              <input
+                id="adjust-note"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                maxLength={255}
+                placeholder="e.g. Supplier invoice #1042"
+                autoComplete="off"
+              />
+            </div>
           </div>
-          <div className="master-field">
-            <label htmlFor="adjust-reason">
-              Adjustment<span className="master-required" aria-hidden="true">*</span>
-            </label>
-            <select id="adjust-reason" value={reason} onChange={(e) => setReason(e.target.value)}>
-              {ADJUSTMENTS.map((a) => (
-                <option key={a.value} value={a.value}>
-                  {a.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="master-field">
-            <label htmlFor="adjust-quantity">
-              {isCount ? 'Counted quantity' : 'Quantity'}
-              <span className="master-required" aria-hidden="true">*</span>
-            </label>
-            <input
-              id="adjust-quantity"
-              type="number"
-              min={isCount ? 0 : 1}
-              max={!isCount && reason !== 'received' && reason !== 'returned' ? product?.stock : undefined}
-              step="1"
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-              required
-            />
-          </div>
-          <div className="master-field is-wide">
-            <label htmlFor="adjust-note">Note</label>
-            <input
-              id="adjust-note"
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              maxLength={255}
-              placeholder="e.g. Supplier invoice #1042"
-              autoComplete="off"
-            />
-          </div>
+
+          {product && (
+            <p className="inv-preview">
+              Stock: <strong className="mono">{product.stock}</strong>
+              {after !== null && (
+                <>
+                  {' '}→{' '}
+                  <strong className={`mono ${after < 0 ? 'is-negative' : ''}`}>{after}</strong>
+                  {after !== product.stock && (
+                    <span className={after > product.stock ? 'is-in' : 'is-out'}>
+                      {after > product.stock ? '+' : '−'}
+                      {Math.abs(after - product.stock)}
+                    </span>
+                  )}
+                </>
+              )}
+            </p>
+          )}
+
+          {error && (
+            <p className="master-alert is-error" role="alert">
+              {error}
+            </p>
+          )}
         </div>
-
-        {product && (
-          <p className="inv-preview">
-            Stock: <strong className="mono">{product.stock}</strong>
-            {after !== null && (
-              <>
-                {' '}→{' '}
-                <strong className={`mono ${after < 0 ? 'is-negative' : ''}`}>{after}</strong>
-                {after !== product.stock && (
-                  <span className={after > product.stock ? 'is-in' : 'is-out'}>
-                    {after > product.stock ? '+' : '−'}
-                    {Math.abs(after - product.stock)}
-                  </span>
-                )}
-              </>
-            )}
-          </p>
-        )}
-
-        {error && (
-          <p className="master-alert is-error" role="alert">
-            {error}
-          </p>
-        )}
 
         <footer className="master-form-actions">
           <button type="button" className="master-button is-secondary" onClick={onClose} disabled={saving}>
