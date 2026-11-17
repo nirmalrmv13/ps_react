@@ -1,7 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { apiGet, apiPost, apiPut } from './api.js'
+import { apiGet, apiPost, apiPut, apiUpload } from './api.js'
 import { EditIcon, PlusIcon, SearchIcon, XIcon } from './Icons.jsx'
 import './MasterPage.css'
+
+function previewUrl(url) {
+  if (!url) return ''
+  if (/^https?:\/\//i.test(url) || url.startsWith('data:') || url.startsWith('blob:')) return url
+  const base = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '')
+  return base ? `${base}${url.startsWith('/') ? url : `/${url}`}` : url
+}
 
 const statusFilters = [
   { id: 'all', label: 'All' },
@@ -19,8 +26,9 @@ function toBody(config, source, isActive) {
   return body
 }
 
-function FormField({ field, values, suggestions, onChange }) {
+function FormField({ field, values, suggestions, onChange, onError }) {
   const id = `master-${field.name}`
+  const [uploading, setUploading] = useState(false)
   const common = {
     id,
     name: field.name,
@@ -29,8 +37,57 @@ function FormField({ field, values, suggestions, onChange }) {
     onChange: (event) => onChange(field, event.target.value),
   }
 
+  async function handleImagePick(event) {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file) return
+    setUploading(true)
+    onError?.('')
+    try {
+      const data = await apiUpload(field.uploadEndpoint || '/api/landing-images/upload', file)
+      onChange(field, data.imageUrl)
+    } catch (err) {
+      onError?.(err.message)
+    } finally {
+      setUploading(false)
+    }
+  }
+
   let control
-  if (field.type === 'textarea') {
+  if (field.type === 'image') {
+    const src = previewUrl(values[field.name])
+    control = (
+      <div className="master-image-field">
+        {src ? (
+          <img className="master-image-preview" src={src} alt="" />
+        ) : (
+          <div className="master-image-placeholder">No image yet</div>
+        )}
+        <div className="master-image-controls">
+          <label className="master-upload-button">
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              onChange={handleImagePick}
+              disabled={uploading}
+            />
+            {uploading ? 'Uploading…' : src ? 'Replace image' : 'Upload image'}
+          </label>
+          <input
+            type="url"
+            id={id}
+            name={field.name}
+            value={values[field.name]}
+            required={field.required}
+            maxLength={field.maxLength}
+            placeholder={field.placeholder}
+            autoComplete="off"
+            onChange={(event) => onChange(field, event.target.value)}
+          />
+        </div>
+      </div>
+    )
+  } else if (field.type === 'textarea') {
     control = <textarea rows={3} maxLength={field.maxLength} {...common} />
   } else if (field.type === 'select') {
     control = (
@@ -61,7 +118,7 @@ function FormField({ field, values, suggestions, onChange }) {
 
   return (
     <div className={`master-field ${field.wide ? 'is-wide' : ''}`}>
-      <label htmlFor={id}>
+      <label htmlFor={field.type === 'image' ? undefined : id}>
         {field.label}
         {field.required && (
           <span className="master-required" aria-hidden="true">
@@ -160,6 +217,7 @@ function MasterForm({ config, item, suggestions, onClose, onSaved }) {
                   values={values}
                   suggestions={suggestions}
                   onChange={handleChange}
+                  onError={setError}
                 />
               ))}
           </div>

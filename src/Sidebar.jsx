@@ -48,6 +48,7 @@ const sections = [
       { id: 'coupons', label: 'Coupon Master', Icon: TagIcon },
       { id: 'membershipPlans', label: 'Membership Plans', Icon: CardIcon },
       { id: 'suppliers', label: 'Supplier Master', Icon: TruckIcon },
+      { id: 'landingImages', label: 'Landing & Carousel', Icon: SparklesIcon },
     ],
   },
 ]

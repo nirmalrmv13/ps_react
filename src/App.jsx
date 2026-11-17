@@ -7,6 +7,7 @@ import BookingPage from './BookingPage.jsx'
 import CustomersPage from './CustomersPage.jsx'
 import InventoryPage from './InventoryPage.jsx'
 import InvoiceView from './InvoiceView.jsx'
+import LandingPage from './LandingPage.jsx'
 import Login from './Login.jsx'
 import MasterPage from './MasterPage.jsx'
 import { masterConfigs } from './masterConfigs.js'
@@ -29,6 +30,7 @@ function App() {
   const [page, setPage] = useState('billing')
   const [checkout, setCheckout] = useState(null)
   const [loginMessage, setLoginMessage] = useState('')
+  const [authView, setAuthView] = useState('landing')
 
   useEffect(
     () =>
@@ -37,6 +39,7 @@ function App() {
         setSession(null)
         setPage('billing')
         setCheckout(null)
+        setAuthView('login')
         setLoginMessage(message || 'Please log in again.')
       }),
     [],
@@ -46,6 +49,7 @@ function App() {
     saveSession(newSession)
     setSession(newSession)
     setLoginMessage('')
+    setAuthView('landing')
   }
 
   function handleLogout() {
@@ -53,6 +57,7 @@ function App() {
     setSession(null)
     setPage('billing')
     setCheckout(null)
+    setAuthView('landing')
   }
 
   function navigate(nextPage) {
@@ -70,7 +75,17 @@ function App() {
   }
 
   if (!session) {
-    return <Login key={loginMessage} message={loginMessage} onLogin={handleLogin} />
+    if (authView === 'login') {
+      return (
+        <Login
+          key={loginMessage}
+          message={loginMessage}
+          onLogin={handleLogin}
+          onBack={() => setAuthView('landing')}
+        />
+      )
+    }
+    return <LandingPage onStaffLogin={() => setAuthView('login')} />
   }
 
   if (invoiceTabId) {

@@ -1,6 +1,6 @@
 import { loadSession } from './session.js'
 
-const API_URL = import.meta.env.VITE_API_URL
+const API_URL = import.meta.env.VITE_API_URL || ''
 
 let unauthorizedHandler = null
 
@@ -53,4 +53,11 @@ export function apiPost(path, body, options) {
 
 export function apiPut(path, body, options) {
   return sendJson('PUT', path, body, options)
+}
+
+/** Upload a binary file (multipart). Do not set Content-Type — the browser adds the boundary. */
+export function apiUpload(path, file, fieldName = 'image', options) {
+  const body = new FormData()
+  body.append(fieldName, file, file.name)
+  return request(path, { ...options, method: 'POST', body })
 }

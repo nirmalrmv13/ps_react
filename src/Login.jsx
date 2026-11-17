@@ -26,7 +26,7 @@ function Brand() {
   )
 }
 
-function Login({ onLogin, message = '' }) {
+function Login({ onLogin, onBack, message = '' }) {
   const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -60,7 +60,17 @@ function Login({ onLogin, message = '' }) {
       <LeafBranch className="leaf leaf-page" />
 
       <section className="auth-intro">
-        <Brand />
+        {onBack ? (
+          <button type="button" className="brand brand-button" onClick={onBack}>
+            <img className="brand-logo" src={logo} alt="" />
+            <div className="brand-text">
+              <span className="brand-name">{BRAND.name}</span>
+              <span className="brand-tagline">{BRAND.tagline}</span>
+            </div>
+          </button>
+        ) : (
+          <Brand />
+        )}
         <h1 className="auth-heading">Welcome Back</h1>
         <img
           className="auth-photo"
@@ -72,6 +82,11 @@ function Login({ onLogin, message = '' }) {
       <section className="auth-card">
         <LeafBranch className="leaf leaf-card" />
 
+        {onBack && (
+          <button type="button" className="link-button auth-back" onClick={onBack}>
+            ← Back to home
+          </button>
+        )}
         <h2 className="card-title">Log in to {BRAND.shortName}</h2>
         <p className="card-subtitle">Access your appointments &amp; profile.</p>
 

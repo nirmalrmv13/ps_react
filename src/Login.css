@@ -41,6 +41,20 @@
   margin-left: 1.5rem;
 }
 
+.brand-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.auth-back {
+  align-self: flex-start;
+  margin: 0 0 0.75rem;
+  font-size: 0.88rem;
+}
+
 .brand-logo {
   flex-shrink: 0;
   width: clamp(56px, 9vh, 76px);
