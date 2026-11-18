@@ -443,9 +443,15 @@ function Confirmation({ booking, onAgain }) {
           <p className="bk-total is-ticket">
             <span>
               Total
-              <small>+ GST, pay at the salon</small>
+              <small>incl. {booking.gstRate ?? 18}% GST · pay at the salon</small>
             </span>
-            <strong>{formatINRWhole(booking.total)}</strong>
+            <strong>
+              {formatINRWhole(
+                Math.round(
+                  (booking.total * (1 + (booking.gstRate ?? 18) / 100) + Number.EPSILON) * 100,
+                ) / 100,
+              )}
+            </strong>
           </p>
 
           <div className="bk-ticket-actions">
@@ -508,11 +514,36 @@ function BookingPage() {
   const chosen = options ? serviceIds.map((id) => options.services.find((s) => s.id === id)).filter(Boolean) : []
   const duration = chosen.reduce((sum, s) => sum + s.duration, 0)
   const total = chosen.reduce((sum, s) => sum + s.price, 0)
+  const gstRate = options?.gstRate ?? 18
+  const gstAmount = Math.round(((total * gstRate) / 100 + Number.EPSILON) * 100) / 100
+  const totalWithGst = Math.round((total + gstAmount + Number.EPSILON) * 100) / 100
   const specialist = options?.specialists.find((p) => p.id === specialistId)
-  const slots =
-    availability.key === slotsKey
-      ? availability.slots.filter((s) => specialistId === 'any' || s.specialistIds.includes(specialistId))
-      : []
+  const slots = useMemo(() => {
+    if (availability.key !== slotsKey) return []
+    let list = availability.slots.filter(
+      (s) => specialistId === 'any' || s.specialistIds.includes(specialistId),
+    )
+    // Hide times that have already passed for today (always use India salon time).
+    const todayIst = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Kolkata',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(new Date())
+    if (selectedDay === todayIst || selectedDay === options?.today) {
+      const parts = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Kolkata',
+        hour: '2-digit',
+        minute: '2-digit',
+        hourCycle: 'h23',
+      }).formatToParts(new Date())
+      const hour = Number(parts.find((p) => p.type === 'hour')?.value ?? 0)
+      const minute = Number(parts.find((p) => p.type === 'minute')?.value ?? 0)
+      const earliest = hour * 60 + minute + 60
+      list = list.filter((s) => toMinutes(s.time) >= earliest)
+    }
+    return list
+  }, [availability, slotsKey, specialistId, selectedDay, options?.today])
   const slotsLoading = availability.key !== slotsKey
   const phoneValid = /^[6-9]\d{9}$/.test(details.phone)
   const canContinue = [chosen.length > 0, true, Boolean(time), details.name.trim() && phoneValid][step]
@@ -816,16 +847,18 @@ function BookingPage() {
                     </div>
                   )}
                   {chosen.length > 0 && (
-                    <p className="bk-total">
+                    <div className="bk-total">
                       <span>
                         Total
-                        <small>+ GST, pay at the salon</small>
+                        <small>
+                          {formatINRWhole(total)} + {gstRate}% GST ({formatINRWhole(gstAmount)})
+                        </small>
                       </span>
                       <span className="bk-mini">
                         {plural(chosen.length, 'treatment')} · {formatDuration(duration)}
                       </span>
-                      <strong>{formatINRWhole(total)}</strong>
-                    </p>
+                      <strong>{formatINRWhole(totalWithGst)}</strong>
+                    </div>
                   )}
                   <button
                     type="button"
